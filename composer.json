@@ -1,0 +1,15 @@
+{
+    "name": "rienus/mpd-proxy",
+    "description": "A proxy between a websocket and MPD",
+    "type": "console",
+    "require": {
+        "symfony/console": "^3.0"
+    },
+    "authors": [
+        {
+            "name": "Rienus Schot",
+            "email": "rienus@innercode.nl"
+        }
+    ],
+    "minimum-stability": "dev"
+}
