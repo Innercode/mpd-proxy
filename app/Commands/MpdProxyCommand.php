@@ -5,6 +5,10 @@ namespace App\Commands;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command;
+use Ratchet\Server\IoServer;
+use Ratchet\Http\HttpServer;
+use Ratchet\WebSocket\WsServer;
+use App\Controllers\WebsocketController;
 
 class MpdProxyCommand extends Command
 {
@@ -17,7 +21,16 @@ class MpdProxyCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('MpdProxy');
+        $server = IoServer::factory(
+            new HttpServer(
+                new WsServer(
+                    new WebsocketController()
+                )
+            ),
+            getenv('wsPort')
+        );
+        $output->writeln('[WS] Server running on port ' . getenv('wsPort'));
+        $server->run();
     }
 }
 
