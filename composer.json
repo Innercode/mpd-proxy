@@ -4,7 +4,8 @@
     "type": "console",
     "require": {
         "symfony/console": "^3.0",
-        "cboden/ratchet": "^0.3.3"
+        "cboden/ratchet": "^0.3.3",
+        "vlucas/phpdotenv": "^2.1"
     },
     "authors": [
         {
