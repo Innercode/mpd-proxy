@@ -1,37 +1,37 @@
-<?php 
+<?php
 
 namespace App\Controllers;
 
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
-use App\Controllers\MpdController;
-use Symfony\Component\Console\Output\Output;
+use Dotenv\Dotenv;
 
 class WebsocketController implements MessageComponentInterface {
     protected $clients;
     protected $mpd;
     protected $mpdState;
-   
+
     public function __construct() {
         $this->clients = new \SplObjectStorage;
         $this->mpdConnect();
+
     }
-    
-    private function mpdConnect(Output $output){
-        $this->mpd = new MpdController(env('mpdAddress'), env('mpdPort'));
+
+    private function mpdConnect(){
+        $this->mpd = new MpdController(getenv('mpdAddress'), getenv('mpdPort'));
         if($this->mpd->connect()){
-            $output->writeln('[MPD] Connected to the mpd socket');
+            echo "[MPD] Connected to the mpd socket\n";
             $this->mpdState = true;
         } else {
-            $output->writeln('[MPD] Could not connect to the mpd socket');
+            echo "[MPD] Could not connect to the mpd socket\n";
             $this->mpdState = false;
         }
     }
-    
-    public function onOpen(ConnectionInterface $conn, Output $output) {
+
+    public function onOpen(ConnectionInterface $conn) {
         // Store the new connection to send messages to later
         $this->clients->attach($conn);
-        $output->writeln('[WS] New connection!');
+        echo "New connection! ({$conn->resourceId})\n";
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
@@ -41,10 +41,10 @@ class WebsocketController implements MessageComponentInterface {
             $this->mpdState = false;
             $this->mpdConnect();
         }
-        
+
         if ($this->mpdState) {
             $msg = json_decode($msg);
-            
+
             switch ($msg->type) {
                 case 'echo':
                     $from->send(json_encode([
@@ -52,7 +52,7 @@ class WebsocketController implements MessageComponentInterface {
                         'callback' => $msg->callback
                     ]));
                     break;
-                    
+
                 case 'mpdCommand':
                     if($this->mpdState){
                         $value = $this->mpd->writeCommand($msg->command);
@@ -68,15 +68,15 @@ class WebsocketController implements MessageComponentInterface {
                     }
                     break;
             }
-  
+
         }
 
     }
 
-    public function onClose(ConnectionInterface $conn, Output $output) {
+    public function onClose(ConnectionInterface $conn) {
         // The connection is closed, remove it, as we can no longer send it messages
         $this->clients->detach($conn);
-        $output->writeln('[WS] A client disconnected');
+        echo "Connection {$conn->resourceId} has disconnected\n";
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
