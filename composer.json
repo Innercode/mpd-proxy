@@ -12,5 +12,10 @@
             "email": "rienus@innercode.nl"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app"
+        }
+    }
 }
