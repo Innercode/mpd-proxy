@@ -3,7 +3,8 @@
     "description": "A proxy between a websocket and MPD",
     "type": "console",
     "require": {
-        "symfony/console": "^3.0"
+        "symfony/console": "^3.0",
+        "cboden/ratchet": "^0.3.3"
     },
     "authors": [
         {
