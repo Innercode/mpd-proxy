@@ -1,5 +1,5 @@
 {
-    "name": "rienus/mpd-proxy",
+    "name": "innercode/mpd-proxy",
     "description": "A proxy between a websocket and MPD",
     "type": "console",
     "require": {
